@@ -12,7 +12,6 @@ import (
 	"github.com/stellar/go/txnbuild"
 )
 
-
 func SignString(toSign string, secretKey string) (string, error) {
 	kp, keyPairError := keypair.ParseFull(secretKey)
 	if keyPairError != nil {
@@ -114,4 +113,8 @@ func VerifyHttpSignature(fullPathWithQuery string, body string, base64Signature 
 
 	return nil
 
+}
+
+func NewPayment() (p *PaymentInfo) {
+	return new(PaymentInfo)
 }
