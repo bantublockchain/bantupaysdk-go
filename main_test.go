@@ -3,10 +3,12 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/bantublockchain/bantupaysdk-go/funcs"
 )
 
 func TestExpressPay(t *testing.T) {
-	paymentDetail := NewPayment()
+	paymentDetail := funcs.NewPayment()
 	paymentDetail.Destination = "ric"
 	paymentDetail.Amount = "2"
 	paymentDetail.Memo = "BantuPaySDKGo ExpressPay"
