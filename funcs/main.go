@@ -12,9 +12,7 @@ import (
 	"github.com/stellar/go/txnbuild"
 )
 
-func NewPayment() *PaymentInfo {
-	return new(PaymentInfo)
-}
+
 func SignString(toSign string, secretKey string) (string, error) {
 	kp, keyPairError := keypair.ParseFull(secretKey)
 	if keyPairError != nil {
