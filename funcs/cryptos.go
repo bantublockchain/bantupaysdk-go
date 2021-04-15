@@ -120,7 +120,4 @@ func VerifyHttpSignature(fullPathWithQuery string, body string, base64Signature 
 
 }
 
-//NewPayment returns a new payment struct
-func NewPayment() (p *PaymentInfo) {
-	return new(PaymentInfo)
-}
+
