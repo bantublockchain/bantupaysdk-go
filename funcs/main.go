@@ -1,0 +1,3 @@
+package funcs
+
+func main() {}
