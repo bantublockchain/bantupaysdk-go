@@ -8,7 +8,7 @@ import (
 )
 
 func TestExpressPay(t *testing.T) {
-	paymentDetail := funcs.NewPayment()
+	paymentDetail := funcs.PaymentInstance()
 	paymentDetail.Destination = "ric"
 	paymentDetail.Amount = "2"
 	paymentDetail.Memo = "BantuPaySDKGo ExpressPay"
