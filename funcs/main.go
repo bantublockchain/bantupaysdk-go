@@ -12,6 +12,7 @@ import (
 	"github.com/stellar/go/txnbuild"
 )
 
+//SignString returns a signed base64 encoded string of toSign
 func SignString(toSign string, secretKey string) (string, error) {
 	kp, keyPairError := keypair.ParseFull(secretKey)
 	if keyPairError != nil {
@@ -30,6 +31,7 @@ func SignString(toSign string, secretKey string) (string, error) {
 	return signature, nil
 }
 
+//SignHttp returns a signed base64 encoded string of fullPathWithQuery+body
 func SignHttp(fullPathWithQuery string, body string, secretKey string) (string, error) {
 	// log.Printf("path + string:[%v]\n", fullPathWithQuery+body)
 	body = strings.TrimSpace(body)
@@ -43,6 +45,7 @@ func SignHttp(fullPathWithQuery string, body string, secretKey string) (string, 
 	return signature, nil
 }
 
+//SignBase64Txn signs the transaction hash from base64Txn string using the secret key
 func SignBase64Txn(secretKey string, base64Txn string, networkPassPhrase string) (string, error) {
 
 	kp, keyPairError := keypair.ParseFull(secretKey)
@@ -77,6 +80,7 @@ func SignBase64Txn(secretKey string, base64Txn string, networkPassPhrase string)
 
 }
 
+//VerifySignatureString verifies if the signatures match with the one to eb generated from toSign
 func VerifySignatureString(toSign string, base64Signature string, publicKey string) error {
 	kp, errParsingPublicKey := keypair.ParseAddress(publicKey)
 	toSign = strings.TrimSpace(toSign)
@@ -101,6 +105,7 @@ func VerifySignatureString(toSign string, base64Signature string, publicKey stri
 
 }
 
+//VerifyHttpSignature verifies the httpRequest signation retrieved from X-BANTUPAY-SIGNATURE header
 func VerifyHttpSignature(fullPathWithQuery string, body string, base64Signature string, publicKey string) error {
 	body = strings.TrimSpace(body)
 	fullPathWithQuery = strings.TrimSpace(fullPathWithQuery)
@@ -115,6 +120,7 @@ func VerifyHttpSignature(fullPathWithQuery string, body string, base64Signature 
 
 }
 
+//NewPayment returns a new payment struct
 func NewPayment() (p *PaymentInfo) {
 	return new(PaymentInfo)
 }
