@@ -15,8 +15,9 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 		return errors.New("paymentInfo struct is nil")
 	}
 	if baseUrl == "" {
-		return errors.New("baseURL is empty")
+		baseUrl = "https://api-alpha.dev.bantupay.org"
 	}
+
 	if ownerUsername == "" {
 		return errors.New("owner username is empty")
 	}
@@ -93,8 +94,9 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 		return errors.New("paymentInfo struct is nil")
 	}
 	if baseUrl == "" {
-		return errors.New("baseURL is empty")
+		baseUrl = "https://api-alpha.dev.bantupay.org"
 	}
+
 	if ownerUsername == "" {
 		return errors.New("owner username is empty")
 	}
@@ -196,6 +198,9 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 }
 
 func (p *PaymentInfo) ExpressPay(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
+	if baseUrl == "" {
+		baseUrl = "https://api-alpha.dev.bantupay.org"
+	}
 	err = p.ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret)
 	if err != nil {
 		return err
