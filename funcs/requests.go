@@ -12,6 +12,7 @@ import (
 
 //NewPayment returns a new payment struct
 func NewPayment() (p *PaymentInfo) {
+
 	return new(PaymentInfo)
 }
 func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
