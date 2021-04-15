@@ -10,8 +10,8 @@ import (
 	"github.com/stellar/go/keypair"
 )
 
-//NewPayment returns a new payment struct
-func NewPayment() (p *PaymentInfo) {
+//PaymentInstance returns a new payment struct
+func PaymentInstance() (p *PaymentInfo) {
 
 	return new(PaymentInfo)
 }
