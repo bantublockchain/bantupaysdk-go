@@ -36,6 +36,8 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 	if len(channelAccountSecret) > 0 {
 		ckp := keypair.MustParseFull(channelAccountSecret)
 		p.ChannelAccount = ckp.Address()
+		// log.Println(ckp.Address())
+
 	}
 	if len(p.Transaction) > 0 {
 		return errors.New("transaction must be empty")

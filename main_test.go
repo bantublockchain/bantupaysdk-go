@@ -9,7 +9,7 @@ import (
 
 func TestExpressPay(t *testing.T) {
 	paymentDetail := funcs.PaymentInstance()
-	paymentDetail.Destination = "ric"
+	paymentDetail.Destination = "ric7"
 	paymentDetail.Amount = "2"
 	paymentDetail.Memo = "BantuPaySDKGo ExpressPay"
 	baseURL := "" //default when empty
