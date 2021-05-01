@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"net/url"
+	"strings"
 
 	"github.com/dghubble/sling"
 	"github.com/shopspring/decimal"
@@ -18,6 +20,12 @@ func PaymentInstance() (p *PaymentInfo) {
 
 //ConfirmPaymentDetail calls bantupayAPI service to generate transactions and confirm payment details. This is the first method to be invoked during payment. the result is returned for UI display of payment details
 func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
+	if strings.Contains(ownerUsername, "%") {
+		u, e := url.QueryUnescape(ownerUsername)
+		if e == nil {
+			ownerUsername = u
+		}
+	}
 	if p == nil {
 		return errors.New("paymentInfo struct is nil")
 	}
@@ -60,7 +68,8 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 		}
 	}
 	errorResponse := new(ErrorResponse)
-	fullPath := "/v2/users/" + ownerUsername + "/payments"
+	escapedOwnerUsername := url.QueryEscape(ownerUsername)
+	fullPath := "/v2/users/" + escapedOwnerUsername + "/payments"
 	// log.Println("fullPath:", fullPath)
 	body, err := json.Marshal(*p)
 
@@ -100,6 +109,13 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 
 //MakePayment makes payment after transaction has been generated  using ConfirmPaymentDetails method
 func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
+	if strings.Contains(ownerUsername, "%") {
+		u, e := url.QueryUnescape(ownerUsername)
+		if e == nil {
+			ownerUsername = u
+		}
+	}
+
 	if p == nil {
 		return errors.New("paymentInfo struct is nil")
 	}
@@ -169,7 +185,8 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 	p.TransactionSignature = signedBase64
 
 	errorResponse := new(ErrorResponse)
-	fullPath := "/v2/users/" + ownerUsername + "/payments"
+	escapedOwnerUsername := url.QueryEscape(ownerUsername)
+	fullPath := "/v2/users/" + escapedOwnerUsername + "/payments"
 	// log.Println("fullPath:", fullPath)
 	body, err := json.Marshal(*p)
 
@@ -209,6 +226,12 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 
 //ExpressPay used by bots and bulk payment systems. this makes payments bypassing any form of confirmation. It chains together ConfirmPaymentDetails and MakePayment methods
 func (p *PaymentInfo) ExpressPay(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
+	if strings.Contains(ownerUsername, "%") {
+		u, e := url.QueryUnescape(ownerUsername)
+		if e == nil {
+			ownerUsername = u
+		}
+	}
 	if baseUrl == "" {
 		baseUrl = "https://api-alpha.dev.bantupay.org"
 	}
