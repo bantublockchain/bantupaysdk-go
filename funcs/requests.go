@@ -1,11 +1,9 @@
 package funcs
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"log"
-	"net/url"
-	"strings"
 
 	"github.com/dghubble/sling"
 	"github.com/shopspring/decimal"
@@ -20,11 +18,16 @@ func PaymentInstance() (p *PaymentInfo) {
 
 //ConfirmPaymentDetail calls bantupayAPI service to generate transactions and confirm payment details. This is the first method to be invoked during payment. the result is returned for UI display of payment details
 func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
-	if strings.Contains(ownerUsername, "%") {
-		u, e := url.QueryUnescape(ownerUsername)
-		if e == nil {
-			ownerUsername = u
-		}
+	// if strings.Contains(ownerUsername, "%") {
+	// 	u, e := url.QueryUnescape(ownerUsername)
+	// 	if e == nil {
+	// 		ownerUsername = u
+	// 	}
+	// }
+	uDec, e := base64.URLEncoding.DecodeString(ownerUsername)
+	if e == nil {
+		// log.Printf("ownerusername is b64 encoded[%v]:[%v]\n", ownerUsername, string(uDec))
+		ownerUsername = string(uDec)
 	}
 	if p == nil {
 		return errors.New("paymentInfo struct is nil")
@@ -68,8 +71,9 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 		}
 	}
 	errorResponse := new(ErrorResponse)
-	escapedOwnerUsername := url.QueryEscape(ownerUsername)
-	fullPath := "/v2/users/" + escapedOwnerUsername + "/payments"
+	sEnc := base64.URLEncoding.EncodeToString([]byte(ownerUsername))
+	// log.Printf("encoded username[%v]: [%v]\n", ownerUsername, sEnc)
+	fullPath := "/v2/users/" + sEnc + "/payments"
 	// log.Println("fullPath:", fullPath)
 	body, err := json.Marshal(*p)
 
@@ -96,11 +100,11 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 		Post(fullPath).BodyJSON(*p).Receive(p, errorResponse)
 	//get payload string
 	if len(errorResponse.Error) > 0 {
-		log.Println("[ConfirmPaymentDetail]server response error:", *errorResponse)
+		// log.Println("[ConfirmPaymentDetail]server response error:", *errorResponse)
 		return errors.New(errorResponse.Message)
 	}
 	if err != nil {
-		log.Println("[ConfirmPaymentDetail]request error:", err)
+		// log.Println("[ConfirmPaymentDetail]request error:", err)
 		return err
 	}
 	// log.Printf("[ConfirmPaymentDetail][%+v]\n", *p)
@@ -109,11 +113,15 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 
 //MakePayment makes payment after transaction has been generated  using ConfirmPaymentDetails method
 func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
-	if strings.Contains(ownerUsername, "%") {
-		u, e := url.QueryUnescape(ownerUsername)
-		if e == nil {
-			ownerUsername = u
-		}
+	// if strings.Contains(ownerUsername, "%") {
+	// 	u, e := url.QueryUnescape(ownerUsername)
+	// 	if e == nil {
+	// 		ownerUsername = u
+	// 	}
+	// }
+	uDec, e := base64.URLEncoding.DecodeString(ownerUsername)
+	if e == nil {
+		ownerUsername = string(uDec)
 	}
 
 	if p == nil {
@@ -169,7 +177,7 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 
 		dsigned, err := SignBase64Txn(ckp.Seed(), p.Transaction, p.NetworkPassPhrase)
 		if err != nil {
-			log.Println("[MakePayment] Channel Account Transaction signing failed:", err)
+			// log.Println("[MakePayment] Channel Account Transaction signing failed:", err)
 			return err
 		}
 		p.ChannelAccountSignature = dsigned
@@ -178,15 +186,16 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 
 	signedBase64, err := SignBase64Txn(kp.Seed(), p.Transaction, p.NetworkPassPhrase)
 	if err != nil {
-		log.Println("[MakePayment] Transaction signing failed:", err)
+		// log.Println("[MakePayment] Transaction signing failed:", err)
 		return err
 	}
 
 	p.TransactionSignature = signedBase64
 
 	errorResponse := new(ErrorResponse)
-	escapedOwnerUsername := url.QueryEscape(ownerUsername)
-	fullPath := "/v2/users/" + escapedOwnerUsername + "/payments"
+	sEnc := base64.URLEncoding.EncodeToString([]byte(ownerUsername))
+
+	fullPath := "/v2/users/" + sEnc + "/payments"
 	// log.Println("fullPath:", fullPath)
 	body, err := json.Marshal(*p)
 
@@ -213,11 +222,11 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 		Post(fullPath).BodyJSON(*p).Receive(p, errorResponse)
 	//get payload string
 	if len(errorResponse.Error) > 0 {
-		log.Println("[MakePayment]server response error:", *errorResponse)
+		// log.Println("[MakePayment]server response error:", *errorResponse)
 		return errors.New(errorResponse.Message)
 	}
 	if err != nil {
-		log.Println("[MakePayment]request error:", err)
+		// log.Println("[MakePayment]request error:", err)
 		return err
 	}
 	// log.Printf("[MakePayment][%+v]\n", *p)
@@ -226,19 +235,21 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 
 //ExpressPay used by bots and bulk payment systems. this makes payments bypassing any form of confirmation. It chains together ConfirmPaymentDetails and MakePayment methods
 func (p *PaymentInfo) ExpressPay(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret string) (err error) {
-	if strings.Contains(ownerUsername, "%") {
-		u, e := url.QueryUnescape(ownerUsername)
-		if e == nil {
-			ownerUsername = u
-		}
-	}
+	// if strings.Contains(ownerUsername, "%") {
+	// 	u, e := url.QueryUnescape(ownerUsername)
+	// 	if e == nil {
+	// 		ownerUsername = u
+	// 	}
+	// }
+	sEnc := base64.URLEncoding.EncodeToString([]byte(ownerUsername))
+	// fmt.Printf("encoded owner username [%v]: [%v]\n", ownerUsername, sEnc)
 	if baseUrl == "" {
 		baseUrl = "https://api-alpha.dev.bantupay.org"
 	}
-	err = p.ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret)
+	err = p.ConfirmPaymentDetail(baseUrl, sEnc, secretKey, ownerPublicKey, channelAccountSecret)
 	if err != nil {
 		return err
 	}
-	return p.MakePayment(baseUrl, ownerUsername, secretKey, ownerPublicKey, channelAccountSecret)
+	return p.MakePayment(baseUrl, sEnc, secretKey, ownerPublicKey, channelAccountSecret)
 
 }
