@@ -4,11 +4,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/dghubble/sling"
 	"github.com/shopspring/decimal"
 	"github.com/stellar/go/keypair"
 )
+
+var acceptedChars = "abcdefghijklmnopqrstuvwxyz_1234567890/"
 
 //PaymentInstance returns a new payment struct
 func PaymentInstance() (p *PaymentInfo) {
@@ -26,8 +29,20 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 	// }
 	uDec, e := base64.URLEncoding.DecodeString(ownerUsername)
 	if e == nil {
-		// log.Printf("ownerusername is b64 encoded[%v]:[%v]\n", ownerUsername, string(uDec))
-		ownerUsername = string(uDec)
+		//check if the decoded contains any non-english character
+		invalidChars := 0
+
+		for _, c := range uDec {
+
+			if !strings.Contains(acceptedChars, strings.TrimSpace(strings.ToLower(string(c)))) {
+				invalidChars++
+			}
+
+		}
+		if invalidChars == 0 {
+			ownerUsername = string(uDec)
+		}
+
 	}
 	if p == nil {
 		return errors.New("paymentInfo struct is nil")
@@ -121,7 +136,20 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 	// }
 	uDec, e := base64.URLEncoding.DecodeString(ownerUsername)
 	if e == nil {
-		ownerUsername = string(uDec)
+		//check if the decoded contains any non-english character
+		invalidChars := 0
+
+		for _, c := range uDec {
+
+			if !strings.Contains(acceptedChars, strings.TrimSpace(strings.ToLower(string(c)))) {
+				invalidChars++
+			}
+
+		}
+		if invalidChars == 0 {
+			ownerUsername = string(uDec)
+		}
+
 	}
 
 	if p == nil {
