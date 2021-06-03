@@ -1,4 +1,4 @@
-module github.com/bantublockchain/bantupaysdk-go@v2.0.0
+module github.com/bantublockchain/bantupaysdk-go
 
 go 1.16
 
