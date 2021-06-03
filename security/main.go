@@ -1,4 +1,4 @@
-package funcs
+package security
 
 import (
 	"encoding/base64"
@@ -119,5 +119,3 @@ func VerifyHttpSignature(fullPathWithQuery string, body string, base64Signature 
 	return nil
 
 }
-
-

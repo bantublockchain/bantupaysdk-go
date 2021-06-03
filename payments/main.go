@@ -1,10 +1,11 @@
-package funcs
+package payments
 
 import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 
+	"github.com/bantublockchain/bantupaysdk-go/security"
 	"github.com/dghubble/sling"
 	"github.com/shopspring/decimal"
 	"github.com/stellar/go/keypair"
@@ -99,7 +100,7 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 	}
 	// log.Println("body:", body)
 	// log.Println("string(body):", string(body))
-	signedHttpHeader, err := SignHttp(fullPath, string(body), secretKey)
+	signedHttpHeader, err := security.SignHttp(fullPath, string(body), secretKey)
 	if err != nil {
 		return err
 	}
@@ -202,7 +203,7 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 		// dsigned := paymentInfo.Transaction
 		//channel account used. sign transaction with channel account
 
-		dsigned, err := SignBase64Txn(ckp.Seed(), p.Transaction, p.NetworkPassPhrase)
+		dsigned, err := security.SignBase64Txn(ckp.Seed(), p.Transaction, p.NetworkPassPhrase)
 		if err != nil {
 			// log.Println("[MakePayment] Channel Account Transaction signing failed:", err)
 			return err
@@ -211,7 +212,7 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 
 	}
 
-	signedBase64, err := SignBase64Txn(kp.Seed(), p.Transaction, p.NetworkPassPhrase)
+	signedBase64, err := security.SignBase64Txn(kp.Seed(), p.Transaction, p.NetworkPassPhrase)
 	if err != nil {
 		// log.Println("[MakePayment] Transaction signing failed:", err)
 		return err
@@ -234,7 +235,7 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 	}
 	// log.Println("body:", body)
 	// log.Println("string(body):", string(body))
-	signedHttpHeader, err := SignHttp(fullPath, string(body), secretKey)
+	signedHttpHeader, err := security.SignHttp(fullPath, string(body), secretKey)
 	if err != nil {
 		return err
 	}

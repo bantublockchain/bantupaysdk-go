@@ -1,4 +1,4 @@
-package funcs
+package payments
 
 //PaymentInfo holds payment information
 type PaymentInfo struct {
