@@ -42,6 +42,6 @@ type MerchantBudsInfo struct {
 	Mobile         string `json:"mobile"`
 	BantuTalk      string `json:"bantuTalk"`
 	ImageThumbnail string `json:"imageThumbnail"`
-	Verified       int    `json:"verified"`
-	Suspended      int    `json:"suspended"`
+	Verified       uint   `json:"verified"`
+	Suspended      uint   `json:"suspended"`
 }
