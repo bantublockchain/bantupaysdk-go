@@ -245,7 +245,7 @@ func (m *Merchant) GetPaymentData(targetUser, paymentDestination, assetCode, ass
 		}
 
 	}
-	if assetIssuer == "" && assetCode != "" {
+	if assetIssuer == "" && assetCode != "" && assetCode != "XBN" {
 		return nil, errors.New("assetIssuer is empty but assetCode is specified")
 	}
 	if amount == "" || amount == "0" {
