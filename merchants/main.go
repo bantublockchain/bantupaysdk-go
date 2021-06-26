@@ -1,6 +1,7 @@
 package merchants
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -94,10 +95,18 @@ func (m *Merchant) SendLoginRequest(targetUser, deviceInfo, callbackUrl string) 
 	}
 	kp := keypair.MustParseFull(m.KP.Seed())
 	// log.Println(kp.Address())
-	encDeviceInfo := url.QueryEscape(deviceInfo)
-	encCallbackUrl := url.QueryEscape(callbackUrl)
-	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/login?deviceInfo=%v&callbackUrl=%v", m.BantupayUsername, targetUser, encDeviceInfo, encCallbackUrl)
-	signedHttpHeader, err := security.SignHttp(fullPath, "", kp.Seed())
+	jsonBody := MerchantRequestInput{
+		DeviceInfo:  deviceInfo,
+		CallbackURL: callbackUrl,
+	}
+
+	body, err := json.Marshal(jsonBody)
+
+	if err != nil {
+		return nil, err
+	}
+	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/login", m.BantupayUsername, targetUser)
+	signedHttpHeader, err := security.SignHttp(fullPath, string(body), kp.Seed())
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +117,7 @@ func (m *Merchant) SendLoginRequest(targetUser, deviceInfo, callbackUrl string) 
 		Set("X-BANTUPAY-SIGNER", kp.Address()).
 		Set("X-BANTUPAY-SIGNATURE", signedHttpHeader).
 		Base(m.BaseURL).
-		Post(fullPath).Receive(loginInfo, errorResponse)
+		Post(fullPath).BodyJSON(jsonBody).Receive(loginInfo, errorResponse)
 	//get payload string
 	if len(errorResponse.Error) > 0 {
 		log.Println("[SendLoginRequest]server response error:", *errorResponse)
@@ -137,11 +146,20 @@ func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceI
 	}
 	kp := keypair.MustParseFull(m.KP.Seed())
 	// log.Println(kp.Address())
-	encAuthDescription := url.QueryEscape(authDescription)
-	encDeviceInfo := url.QueryEscape(deviceInfo)
-	encCallbackUrl := url.QueryEscape(callbackUrl)
-	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/authorize?authDescription=%v&deviceInfo=%v&callbackUrl=%v", m.BantupayUsername, targetUser, encAuthDescription, encDeviceInfo, encCallbackUrl)
-	signedHttpHeader, err := security.SignHttp(fullPath, "", kp.Seed())
+	jsonBody := MerchantRequestInput{
+		AuthDescription: authDescription,
+		DeviceInfo:      deviceInfo,
+		CallbackURL:     callbackUrl,
+	}
+
+	body, err := json.Marshal(jsonBody)
+
+	if err != nil {
+		return nil, err
+	}
+
+	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/authorize", m.BantupayUsername, targetUser)
+	signedHttpHeader, err := security.SignHttp(fullPath, string(body), kp.Seed())
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +177,7 @@ func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceI
 		Set("X-BANTUPAY-SIGNER", kp.Address()).
 		Set("X-BANTUPAY-SIGNATURE", signedHttpHeader).
 		Base(m.BaseURL).
-		Post(fullPath).Receive(authInfo, errorResponse)
+		Post(fullPath).BodyJSON(jsonBody).Receive(authInfo, errorResponse)
 	//get payload string
 	if len(errorResponse.Error) > 0 {
 		log.Println("[SendAuthorizationRequest]server response error:", *errorResponse)
