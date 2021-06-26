@@ -81,7 +81,7 @@ func (m *Merchant) VerifyLoginRequest(targetUser, loginID string) (userDetail *M
 }
 
 //SendLoginRequest sends login request and retrieves QRCode and dynamic link
-func (m *Merchant) SendLoginRequest(targetUser string) (loginInfo *LoginWithBantupayData, err error) {
+func (m *Merchant) SendLoginRequest(targetUser, deviceInfo, callbackUrl string) (loginInfo *LoginWithBantupayData, err error) {
 
 	if m.BaseURL == "" {
 		m.BaseURL = "https://api-alpha.dev.bantupay.org"
@@ -94,8 +94,9 @@ func (m *Merchant) SendLoginRequest(targetUser string) (loginInfo *LoginWithBant
 	}
 	kp := keypair.MustParseFull(m.KP.Seed())
 	// log.Println(kp.Address())
-
-	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/login", m.BantupayUsername, targetUser)
+	encDeviceInfo := url.QueryEscape(deviceInfo)
+	encCallbackUrl := url.QueryEscape(callbackUrl)
+	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/login?deviceInfo=%v&callbackUrl=%v", m.BantupayUsername, targetUser, encDeviceInfo, encCallbackUrl)
 	signedHttpHeader, err := security.SignHttp(fullPath, "", kp.Seed())
 	if err != nil {
 		return nil, err
@@ -123,7 +124,7 @@ func (m *Merchant) SendLoginRequest(targetUser string) (loginInfo *LoginWithBant
 }
 
 //SendAuthorizationRequest sends 2FA authorization request and retrieves QRCode and dynamic link
-func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceInfo string) (authInfo *BantupayAuthorizationData, err error) {
+func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceInfo, callbackUrl string) (authInfo *BantupayAuthorizationData, err error) {
 
 	if m.BaseURL == "" {
 		m.BaseURL = "https://api-alpha.dev.bantupay.org"
@@ -138,7 +139,8 @@ func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceI
 	// log.Println(kp.Address())
 	encAuthDescription := url.QueryEscape(authDescription)
 	encDeviceInfo := url.QueryEscape(deviceInfo)
-	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/authorize?authDescription=%v&deviceInfo=%v", m.BantupayUsername, targetUser, encAuthDescription, encDeviceInfo)
+	encCallbackUrl := url.QueryEscape(callbackUrl)
+	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/authorize?authDescription=%v&deviceInfo=%v&callbackUrl=%v", m.BantupayUsername, targetUser, encAuthDescription, encDeviceInfo, encCallbackUrl)
 	signedHttpHeader, err := security.SignHttp(fullPath, "", kp.Seed())
 	if err != nil {
 		return nil, err
