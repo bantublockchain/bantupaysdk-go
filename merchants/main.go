@@ -316,13 +316,16 @@ func (m *Merchant) GetPaymentData(targetUser, paymentDestination, assetCode, ass
 }
 
 //SendPushNotification sends a push notification
-func (m *Merchant) SendPushNotification(targetUser, message string) (err error) {
+func (m *Merchant) SendPushNotification(targetUser, title, message string) (err error) {
 
 	if m.BaseURL == "" {
 		m.BaseURL = "https://api-alpha.dev.bantupay.org"
 	}
 	if m.BantupayUsername == "" {
 		return errors.New("owner username is empty")
+	}
+	if title == "" {
+		return errors.New("message is empty")
 	}
 	if message == "" {
 		return errors.New("message is empty")
@@ -333,6 +336,7 @@ func (m *Merchant) SendPushNotification(targetUser, message string) (err error) 
 	kp := keypair.MustParseFull(m.KP.Seed())
 	// log.Println(kp.Address())
 	jsonBody := MerchantPushNotification{
+		Title:   title,
 		Message: message,
 	}
 

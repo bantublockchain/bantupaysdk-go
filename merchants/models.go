@@ -51,5 +51,6 @@ type MerchantRequestInput struct {
 	CallbackURL     string `json:"callbackUrl,omitempty"`
 }
 type MerchantPushNotification struct {
-	Message string `json:"message,omitempty"`
+	Title   string `json:"title,omitempty"`
+	Message string `json:"Message,omitempty"`
 }
