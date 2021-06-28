@@ -314,3 +314,55 @@ func (m *Merchant) GetPaymentData(targetUser, paymentDestination, assetCode, ass
 
 	return paymentData, nil
 }
+
+//SendPushNotification sends a push notification
+func (m *Merchant) SendPushNotification(targetUser, message string) (err error) {
+
+	if m.BaseURL == "" {
+		m.BaseURL = "https://api-alpha.dev.bantupay.org"
+	}
+	if m.BantupayUsername == "" {
+		return errors.New("owner username is empty")
+	}
+	if message == "" {
+		return errors.New("message is empty")
+	}
+	if targetUser == "" {
+		return errors.New("target username is empty")
+	}
+	kp := keypair.MustParseFull(m.KP.Seed())
+	// log.Println(kp.Address())
+	jsonBody := MerchantPushNotification{
+		Message: message,
+	}
+
+	body, err := json.Marshal(jsonBody)
+
+	if err != nil {
+		return err
+	}
+	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/push", m.BantupayUsername, targetUser)
+	signedHttpHeader, err := security.SignHttp(fullPath, string(body), kp.Seed())
+	if err != nil {
+		return err
+	}
+	errorResponse := new(ErrorResponse)
+	sucsessResponse := new(map[string]interface{})
+	_, err = sling.New().Set("User-Agent", "BantuPay Go SDK").
+		Set("X-BANTUPAY-PUBLIC-KEY", kp.Address()).
+		Set("X-BANTUPAY-SIGNER", kp.Address()).
+		Set("X-BANTUPAY-SIGNATURE", signedHttpHeader).
+		Base(m.BaseURL).
+		Post(fullPath).BodyJSON(jsonBody).Receive(sucsessResponse, errorResponse)
+	//get payload string
+	if len(errorResponse.Error) > 0 {
+		log.Println("[SendPushNotification]server response error:", *errorResponse)
+		return errors.New(errorResponse.Message)
+	}
+	if err != nil {
+		log.Println("[SendPushNotification]request error:", err)
+		return err
+	}
+
+	return nil
+}

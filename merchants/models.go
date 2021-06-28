@@ -50,3 +50,6 @@ type MerchantRequestInput struct {
 	DeviceInfo      string `json:"deviceInfo,omitempty"`
 	CallbackURL     string `json:"callbackUrl,omitempty"`
 }
+type MerchantPushNotification struct {
+	Message string `json:"message,omitempty"`
+}
