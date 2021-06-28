@@ -52,5 +52,5 @@ type MerchantRequestInput struct {
 }
 type MerchantPushNotification struct {
 	Title   string `json:"title,omitempty"`
-	Message string `json:"Message,omitempty"`
+	Message string `json:"message,omitempty"`
 }
