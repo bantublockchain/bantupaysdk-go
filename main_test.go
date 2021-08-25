@@ -1,13 +1,6 @@
 package main
 
-import (
-	"log"
-	"os"
-	"testing"
-
-	"github.com/bantublockchain/bantupaysdk-go/merchants"
-	// payments "github.com/bantublockchain/bantupaysdk-go/payments"
-)
+// payments "github.com/bantublockchain/bantupaysdk-go/payments"
 
 // func TestExpressPay(t *testing.T) {
 // 	paymentDetail := payments.PaymentInstance()
@@ -53,11 +46,12 @@ import (
 // }
 
 // func TestSendAuthorizationRequest(t *testing.T) {
-// 	merchant, err := merchants.NewMerchant("", "xbnp2p", os.Getenv("MERCHANTSK"))
+// 	merchant, err := merchants.NewMerchant("", "reward-testnet", os.Getenv("MERCHANTSK"))
 // 	if err != nil {
 // 		t.Errorf(err.Error())
 // 	}
-// 	authData, err := merchant.SendAuthorizationRequest("ric", "Add New Payment Method: Account-1004847601, Bank-Zenith PLC, Country - NG", "")
+// 	//send auth for rewards
+// 	authData, err := merchant.SendAuthorizationRequest("reward-testnet", "Receive Special Hangout Airdrop", "", "https://api-alpha.dev.bantupay.org/v2/callbacks/auth/rewards", 1440)
 // 	if err != nil {
 // 		t.Errorf(err.Error())
 // 	}
@@ -81,22 +75,23 @@ import (
 // 	log.Printf("Authorization [%v] successfully verified.\n", authID)
 
 // }
-func TestGetPaymentData(t *testing.T) {
-	merchant, err := merchants.NewMerchant("", "xbnp2p", os.Getenv("MERCHANTSK"))
-	if err != nil {
-		t.Errorf(err.Error())
-	}
-	assetCode := ""
-	assetIssuer := ""
-	amount := "0.02"
-	memo := "34hggf76398hfggsf736bvg"
-	paymentDestination := "xbnp2p"
-	paymentData, err := merchant.GetPaymentData("ric", paymentDestination, assetCode, assetIssuer, amount, memo)
-	if err != nil {
-		t.Errorf(err.Error())
-		return
-	}
-	log.Printf("Payment QRCode:[%+v]\n\n", paymentData.QRCode)
-	log.Printf("Payment DynamicLink:[%+v]\n", paymentData.DynamicLink)
 
-}
+// func TestGetPaymentData(t *testing.T) {
+// 	merchant, err := merchants.NewMerchant("", "timbuktu", os.Getenv("MERCHANTSK"))
+// 	if err != nil {
+// 		t.Errorf(err.Error())
+// 	}
+// 	assetCode := ""
+// 	assetIssuer := ""
+// 	amount := "100"
+// 	memo := "Cairo Arena"
+// 	paymentDestination := "100/10"
+// 	paymentData, err := merchant.GetPaymentData("ric7", paymentDestination, assetCode, assetIssuer, amount, memo)
+// 	if err != nil {
+// 		t.Errorf(err.Error())
+// 		return
+// 	}
+// 	log.Printf("[%v] Payment QRCode: [%+v]\n\n", memo, paymentData.QRCode)
+// 	log.Printf("[%v] Payment DynamicLink:  [%+v]\n", memo, paymentData.DynamicLink)
+
+// }

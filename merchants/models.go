@@ -46,9 +46,10 @@ type MerchantBudsInfo struct {
 	Suspended      uint   `json:"suspended"`
 }
 type MerchantRequestInput struct {
-	AuthDescription string `json:"authDescription,omitempty"`
-	DeviceInfo      string `json:"deviceInfo,omitempty"`
-	CallbackURL     string `json:"callbackUrl,omitempty"`
+	AuthDescription   string `json:"authDescription,omitempty"`
+	DeviceInfo        string `json:"deviceInfo,omitempty"`
+	CallbackURL       string `json:"callbackUrl,omitempty"`
+	ValidityInMinutes int    `json:"validityInMinutes,omitempty"`
 }
 type MerchantPushNotification struct {
 	Title   string `json:"title,omitempty"`

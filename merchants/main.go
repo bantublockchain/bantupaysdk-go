@@ -133,7 +133,7 @@ func (m *Merchant) SendLoginRequest(targetUser, deviceInfo, callbackUrl string) 
 }
 
 //SendAuthorizationRequest sends 2FA authorization request and retrieves QRCode and dynamic link
-func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceInfo, callbackUrl string) (authInfo *BantupayAuthorizationData, err error) {
+func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceInfo, callbackUrl string, validityInMinutes int) (authInfo *BantupayAuthorizationData, err error) {
 
 	if m.BaseURL == "" {
 		m.BaseURL = "https://api-alpha.dev.bantupay.org"
@@ -147,9 +147,10 @@ func (m *Merchant) SendAuthorizationRequest(targetUser, authDescription, deviceI
 	kp := keypair.MustParseFull(m.KP.Seed())
 	// log.Println(kp.Address())
 	jsonBody := MerchantRequestInput{
-		AuthDescription: authDescription,
-		DeviceInfo:      deviceInfo,
-		CallbackURL:     callbackUrl,
+		AuthDescription:   authDescription,
+		DeviceInfo:        deviceInfo,
+		CallbackURL:       callbackUrl,
+		ValidityInMinutes: validityInMinutes,
 	}
 
 	body, err := json.Marshal(jsonBody)

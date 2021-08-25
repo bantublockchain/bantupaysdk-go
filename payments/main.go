@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/bantublockchain/bantupaysdk-go/security"
 	"github.com/dghubble/sling"
@@ -86,8 +87,13 @@ func (p *PaymentInfo) ConfirmPaymentDetail(baseUrl, ownerUsername, secretKey, ow
 		}
 	}
 	errorResponse := new(ErrorResponse)
-	sEnc := base64.URLEncoding.EncodeToString([]byte(ownerUsername))
-	// log.Printf("encoded username[%v]: [%v]\n", ownerUsername, sEnc)
+	var sEnc string
+	if strings.Contains(ownerUsername, "/") {
+		sEnc = base64.URLEncoding.EncodeToString([]byte(ownerUsername))
+
+	} else {
+		sEnc = ownerUsername
+	} // log.Printf("encoded username[%v]: [%v]\n", ownerUsername, sEnc)
 	fullPath := "/v2/users/" + sEnc + "/payments"
 	// log.Println("fullPath:", fullPath)
 	body, err := json.Marshal(*p)
@@ -221,8 +227,13 @@ func (p *PaymentInfo) MakePayment(baseUrl, ownerUsername, secretKey, ownerPublic
 	p.TransactionSignature = signedBase64
 
 	errorResponse := new(ErrorResponse)
-	sEnc := base64.URLEncoding.EncodeToString([]byte(ownerUsername))
+	var sEnc string
+	if strings.Contains(ownerUsername, "/") {
+		sEnc = base64.URLEncoding.EncodeToString([]byte(ownerUsername))
 
+	} else {
+		sEnc = ownerUsername
+	}
 	fullPath := "/v2/users/" + sEnc + "/payments"
 	// log.Println("fullPath:", fullPath)
 	body, err := json.Marshal(*p)
