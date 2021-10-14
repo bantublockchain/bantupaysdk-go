@@ -1,6 +1,13 @@
 package main
 
-// payments "github.com/bantublockchain/bantupaysdk-go/payments"
+import (
+	"log"
+	"os"
+	"testing"
+
+	"github.com/bantublockchain/bantupaysdk-go/merchants"
+	// payments "github.com/bantublockchain/bantupaysdk-go/payments"
+)
 
 // func TestExpressPay(t *testing.T) {
 // 	paymentDetail := payments.PaymentInstance()
@@ -45,21 +52,23 @@ package main
 
 // }
 
-// func TestSendAuthorizationRequest(t *testing.T) {
-// 	merchant, err := merchants.NewMerchant("", "reward-testnet", os.Getenv("MERCHANTSK"))
-// 	if err != nil {
-// 		t.Errorf(err.Error())
-// 	}
-// 	//send auth for rewards
-// 	authData, err := merchant.SendAuthorizationRequest("reward-testnet", "Receive Special Hangout Airdrop", "", "https://api-alpha.dev.bantupay.org/v2/callbacks/auth/rewards", 1440)
-// 	if err != nil {
-// 		t.Errorf(err.Error())
-// 	}
-// 	log.Printf("QRCode:[%+v]\n", authData.QRCode)
-// 	log.Printf("DynamicLink:[%+v]\n", authData.DynamicLink)
-// 	log.Printf("AuthID:[%+v]\n", authData.AuthID)
+func TestSendAuthorizationRequest(t *testing.T) {
+	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-airdrop", os.Getenv("MERCHANTSK"))
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	//send auth for rewards
+	authData, err := merchant.SendAuthorizationRequest("bantu-airdrop", "claim your Bantu Genesis Block airdrop", "", "https://api.bantupay.org/v2/callbacks/auth/rewards", 2880)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	log.Printf("QRCode:[%+v]\n", authData.QRCode)
+	log.Printf("DynamicLink:[%+v]\n", authData.DynamicLink)
+	log.Printf("AuthID:[%+v]\n", authData.AuthID)
 
-// }
+}
 
 // func TestVerifyAuthorizationRequest(t *testing.T) {
 // 	merchant, err := merchants.NewMerchant("", "xbnp2p", os.Getenv("MERCHANTSK"))

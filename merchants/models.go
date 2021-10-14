@@ -44,6 +44,7 @@ type MerchantBudsInfo struct {
 	ImageThumbnail string `json:"imageThumbnail"`
 	Verified       uint   `json:"verified"`
 	Suspended      uint   `json:"suspended"`
+	Referrer       uint   `json:"referrer"`
 }
 type MerchantRequestInput struct {
 	AuthDescription   string `json:"authDescription,omitempty"`
