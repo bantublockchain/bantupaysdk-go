@@ -81,6 +81,50 @@ func (m *Merchant) VerifyLoginRequest(targetUser, loginID string) (userDetail *M
 	return userDetail, nil
 }
 
+//GetUserInfo gets userinfo and resturns nil
+func (m *Merchant) GetUserInfo(targetUser string) (userDetail *MerchantBudsInfo, err error) {
+
+	if m.BaseURL == "" {
+		m.BaseURL = "https://api-alpha.dev.bantupay.org"
+	}
+	if m.BantupayUsername == "" {
+		return nil, errors.New("owner username is empty")
+	}
+	if targetUser == "" {
+		return nil, errors.New("target username is empty")
+	}
+
+	kp := keypair.MustParseFull(m.KP.Seed())
+	// log.Println(kp.Address())
+
+	fullPath := fmt.Sprintf("/v2/merchants/%v/%v/userinfo", m.BantupayUsername, targetUser)
+	signedHttpHeader, err := security.SignHttp(fullPath, "", kp.Seed())
+	if err != nil {
+		return nil, err
+	}
+	errorResponse := new(ErrorResponse)
+	userDetail = new(MerchantBudsInfo)
+
+	_, err = sling.New().Set("User-Agent", "BantuPay Go SDK").
+		Set("X-BANTUPAY-PUBLIC-KEY", kp.Address()).
+		Set("X-BANTUPAY-SIGNER", kp.Address()).
+		Set("X-BANTUPAY-SIGNATURE", signedHttpHeader).
+		Base(m.BaseURL).
+		Get(fullPath).Receive(userDetail, errorResponse)
+	//get payload string
+	if len(errorResponse.Error) > 0 {
+		log.Println("[GetUserInfo]server response error:", *errorResponse)
+		return nil, errors.New(errorResponse.Message)
+	}
+	if err != nil {
+		log.Println("[GetUserInfo]request error:", err)
+		return nil, err
+	}
+	// log.Printf("[GetUserInfo][%+v]\n", *userDetail)
+
+	return userDetail, nil
+}
+
 //SendLoginRequest sends login request and retrieves QRCode and dynamic link
 func (m *Merchant) SendLoginRequest(targetUser, deviceInfo, callbackUrl string) (loginInfo *LoginWithBantupayData, err error) {
 
