@@ -6,8 +6,9 @@ import (
 	"testing"
 
 	"github.com/bantublockchain/bantupaysdk-go/merchants"
-	// payments "github.com/bantublockchain/bantupaysdk-go/payments"
 )
+
+// payments "github.com/bantublockchain/bantupaysdk-go/payments"
 
 // func TestExpressPay(t *testing.T) {
 // 	paymentDetail := payments.PaymentInstance()
@@ -52,14 +53,32 @@ import (
 
 // }
 
+// func TestSendAuthorizationRequest(t *testing.T) {
+// 	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-airdrop", os.Getenv("MERCHANTSK"))
+// 	if err != nil {
+// 		t.Errorf(err.Error())
+// 		return
+// 	}
+// 	//send auth for rewards
+// 	authData, err := merchant.SendAuthorizationRequest("bantu-airdrop", "claim your Bantu Kano Hangout airdrop", "", "https://api.bantupay.org/v2/callbacks/auth/rewards", 2880)
+// 	if err != nil {
+// 		t.Errorf(err.Error())
+// 		return
+// 	}
+// 	log.Printf("QRCode:[%+v]\n", authData.QRCode)
+// 	log.Printf("DynamicLink:[%+v]\n", authData.DynamicLink)
+// 	log.Printf("AuthID:[%+v]\n", authData.AuthID)
+
+// }
+
 func TestSendAuthorizationRequest(t *testing.T) {
-	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-airdrop", os.Getenv("MERCHANTSK"))
+	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-event", os.Getenv("BANTUEVENTSK"))
 	if err != nil {
 		t.Errorf(err.Error())
 		return
 	}
 	//send auth for rewards
-	authData, err := merchant.SendAuthorizationRequest("bantu-airdrop", "claim your Bantu Genesis Block airdrop", "", "https://api.bantupay.org/v2/callbacks/auth/rewards", 2880)
+	authData, err := merchant.SendAuthorizationRequest("bantu-event", "join the waitlist for the Bantu XBN staking service", "", "https://api.bantupay.org/v2/callbacks/auth/events", 4880)
 	if err != nil {
 		t.Errorf(err.Error())
 		return
@@ -86,16 +105,16 @@ func TestSendAuthorizationRequest(t *testing.T) {
 // }
 
 // func TestGetPaymentData(t *testing.T) {
-// 	merchant, err := merchants.NewMerchant("", "timbuktu", os.Getenv("MERCHANTSK"))
+// 	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "timbuktu", os.Getenv("MERCHANTSK"))
 // 	if err != nil {
 // 		t.Errorf(err.Error())
 // 	}
 // 	assetCode := ""
 // 	assetIssuer := ""
-// 	amount := "100"
-// 	memo := "Cairo Arena"
-// 	paymentDestination := "100/10"
-// 	paymentData, err := merchant.GetPaymentData("ric7", paymentDestination, assetCode, assetIssuer, amount, memo)
+// 	amount := "400"
+// 	memo := "Bantu Hangout Abuja T-Shirt"
+// 	paymentDestination := "t-shirt-merch"
+// 	paymentData, err := merchant.GetPaymentData("ric", paymentDestination, assetCode, assetIssuer, amount, memo)
 // 	if err != nil {
 // 		t.Errorf(err.Error())
 // 		return
