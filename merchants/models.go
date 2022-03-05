@@ -46,6 +46,7 @@ type UserBalanceForMerchant struct {
 
 //MerchantBudsInfo model for bantu user directory info
 type MerchantBudsInfo struct {
+	CreatedAt      string                 `json:"createdAt"`
 	Username       string                 `json:"username"`
 	PublicKey      string                 `json:"publicKey"`
 	Email          string                 `json:"email"`
