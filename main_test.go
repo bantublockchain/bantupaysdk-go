@@ -53,14 +53,32 @@ import (
 
 // }
 
+func TestSendAuthorizationRequest(t *testing.T) {
+	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-airdrop", os.Getenv("MERCHANTSK"))
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	//send auth for rewards
+	authData, err := merchant.SendAuthorizationRequest("bantu-airdrop", "claim your Bantu Expansion Reward for registering via the flyer", "", "https://api.bantupay.org/v2/callbacks/auth/rewards", 9880)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	log.Printf("QRCode:[%+v]\n", authData.QRCode)
+	log.Printf("DynamicLink:[%+v]\n", authData.DynamicLink)
+	log.Printf("AuthID:[%+v]\n", authData.AuthID)
+
+}
+
 // func TestSendAuthorizationRequest(t *testing.T) {
-// 	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-airdrop", os.Getenv("MERCHANTSK"))
+// 	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-event", os.Getenv("BANTUEVENTSK"))
 // 	if err != nil {
 // 		t.Errorf(err.Error())
 // 		return
 // 	}
 // 	//send auth for rewards
-// 	authData, err := merchant.SendAuthorizationRequest("bantu-airdrop", "claim your Bantu Kano Hangout airdrop", "", "https://api.bantupay.org/v2/callbacks/auth/rewards", 2880)
+// 	authData, err := merchant.SendAuthorizationRequest("bantu-event", "register for Changing Times-Bantu Welcome airdrop", "", "https://api.bantupay.org/v2/callbacks/auth/events", 4880)
 // 	if err != nil {
 // 		t.Errorf(err.Error())
 // 		return
@@ -71,23 +89,23 @@ import (
 
 // }
 
-func TestSendAuthorizationRequest(t *testing.T) {
-	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "bantu-event", os.Getenv("BANTUEVENTSK"))
-	if err != nil {
-		t.Errorf(err.Error())
-		return
-	}
-	//send auth for rewards
-	authData, err := merchant.SendAuthorizationRequest("bantu-event", "join the waitlist for the Bantu XBN staking service", "", "https://api.bantupay.org/v2/callbacks/auth/events", 4880)
-	if err != nil {
-		t.Errorf(err.Error())
-		return
-	}
-	log.Printf("QRCode:[%+v]\n", authData.QRCode)
-	log.Printf("DynamicLink:[%+v]\n", authData.DynamicLink)
-	log.Printf("AuthID:[%+v]\n", authData.AuthID)
+// func TestSendAuthorizationRequest(t *testing.T) {
+// 	merchant, err := merchants.NewMerchant("https://api.bantupay.org", "xbn-staking-event", os.Getenv("BANTUSTAKINGSK"))
+// 	if err != nil {
+// 		t.Errorf(err.Error())
+// 		return
+// 	}
+// 	//send auth for rewards
+// 	authData, err := merchant.SendAuthorizationRequest("xbn-staking-event", "join the waitlist for the next Bantu XBN staking round", "", "https://api.bantupay.org/v2/callbacks/auth/events", 10000)
+// 	if err != nil {
+// 		t.Errorf(err.Error())
+// 		return
+// 	}
+// 	log.Printf("QRCode:[%+v]\n", authData.QRCode)
+// 	log.Printf("DynamicLink:[%+v]\n", authData.DynamicLink)
+// 	log.Printf("AuthID:[%+v]\n", authData.AuthID)
 
-}
+// }
 
 // func TestVerifyAuthorizationRequest(t *testing.T) {
 // 	merchant, err := merchants.NewMerchant("", "xbnp2p", os.Getenv("MERCHANTSK"))
